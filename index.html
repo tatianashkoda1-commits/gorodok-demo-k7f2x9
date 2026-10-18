@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Новогодний городок</title>
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,500;1,600&family=Caveat:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0f1c;--ink:#f6ead6;--muted:#a99f93;--gold:#e3bb63;--gold2:#f6dc98;--paper:#f4ead7;--wood:#5a3a22}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--ink);font:15px/1.45 Inter,system-ui,sans-serif;
+  background:radial-gradient(ellipse at 50% -10%,#24305a 0,#121a33 45%,var(--bg) 80%) fixed}
+#snow{position:fixed;inset:0;pointer-events:none;z-index:1}
+.tabs{position:relative;z-index:2;display:flex;justify-content:center;gap:8px;padding:16px 16px 0}
+.tabs button{font:600 13px Inter;padding:7px 16px;border-radius:30px;border:1px solid rgba(255,255,255,.15);background:transparent;color:var(--muted);cursor:pointer}
+.tabs button.on{background:rgba(227,187,99,.15);color:var(--gold2);border-color:rgba(227,187,99,.5)}
+.page{display:none;position:relative;z-index:2;padding:14px 16px 70px}.page.on{display:block}
+.phone{max-width:440px;margin:0 auto}
+.title{text-align:center;margin:10px 0 2px}
+.title b{display:block;font:700 40px/1 Caveat,cursive;color:var(--gold2);text-shadow:0 0 24px rgba(246,220,152,.35)}
+.title span{font:600 11px Inter;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+.lead{text-align:center;color:var(--muted);font-size:13.5px;margin:8px auto 16px;max-width:360px}
+/* ---------- город ---------- */
+.town{position:relative;height:330px;overflow-x:auto;overflow-y:hidden;border-radius:18px;
+  box-shadow:0 20px 50px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.06);scrollbar-width:none}
+.town::-webkit-scrollbar{display:none}
+.town-in{position:relative;height:100%;aspect-ratio:3168/1344;background:url("img/town.jpg") 0 0/100% 100%}
+.town-in::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(12,15,28,.25),transparent 30%,transparent 75%,rgba(12,15,28,.45))}
+.spot{position:absolute;cursor:pointer;border-radius:4px 4px 1px 1px;transition:box-shadow .3s}
+.spot:hover{box-shadow:0 0 0 2px rgba(246,220,152,.7),0 0 26px 6px rgba(255,200,110,.45)}
+.spot.fresh{animation:glow 2.2s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 0 2px rgba(246,220,152,.8),0 0 30px 10px rgba(255,200,110,.5)}}
+.sign{position:absolute;left:50%;top:-38px;transform:translateX(-50%);width:30px;height:30px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#7a5233,#3f2716);border:2px solid var(--gold);
+  font:700 15px "Playfair Display",serif;color:var(--gold2);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.6)}
+.sign::before{content:"";position:absolute;left:50%;top:-9px;width:1px;height:9px;background:var(--gold)}
+.spot.done .sign{background:radial-gradient(circle at 35% 30%,#3c7a5a,#1d4532)}
+.swipe{text-align:center;font:500 18px Caveat,cursive;color:var(--muted);margin-top:8px}
+/* ---------- ёлка ---------- */
+.treebox{margin-top:26px;text-align:center}
+.treebox h3{margin:0;font:700 34px/1 Caveat,cursive;color:var(--gold2)}
+.count{font:600 12px Inter;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.hint{font:500 19px/1.2 Caveat,cursive;color:var(--gold2);min-height:24px;margin:8px 0 4px}
+.tray{display:flex;gap:22px;justify-content:center;align-items:flex-end;min-height:62px;padding:6px 0}
+.tray:has(.gift.open){min-height:104px}
+.treewrap{position:relative;width:100%;max-width:420px;margin:0 auto;aspect-ratio:1611/2000;touch-action:none}
+.treeimg{position:absolute;inset:0;border-radius:18px;background:url("img/tree.jpg") center/100% 100% no-repeat;box-shadow:0 20px 50px rgba(0,0,0,.55)}
+.treewrap.armed{cursor:copy}
+.light{animation:tw 2.4s ease-in-out infinite}
+@keyframes tw{50%{opacity:.35}}
+/* шары */
+.orn{position:relative;width:46px;height:46px;border-radius:50%;flex:0 0 auto;box-shadow:0 6px 14px rgba(0,0,0,.45)}
+.orn::before{content:"";position:absolute;left:50%;top:-14%;width:30%;height:18%;transform:translateX(-50%);border-radius:2px 2px 1px 1px;
+  background:linear-gradient(90deg,#8a6a2a,#f1d27a 45%,#8a6a2a)}
+.orn::after{content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 30% 26%,rgba(255,255,255,.85) 0,rgba(255,255,255,.25) 14%,transparent 30%),radial-gradient(circle at 70% 78%,rgba(0,0,0,.35),transparent 55%)}
+.orn.t-orange{background:radial-gradient(circle,#fff3d4 0 11%,transparent 12%),repeating-conic-gradient(#f08a12 0 27deg,#ffd88a 27deg 30deg),#f08a12;
+  box-shadow:inset 0 0 0 3px #e2761a,0 6px 14px rgba(0,0,0,.45)}
+.orn.t-tartan{background:repeating-linear-gradient(0deg,rgba(18,62,42,.75) 0 4px,transparent 4px 11px),repeating-linear-gradient(90deg,rgba(18,62,42,.75) 0 4px,transparent 4px 11px),repeating-linear-gradient(90deg,transparent 0 9px,rgba(255,220,120,.6) 9px 10px,transparent 10px 11px),#b3242b}
+.orn.t-sugar{background:radial-gradient(#fff 1px,transparent 1.6px) 0 0/6px 6px,radial-gradient(#fff 1px,transparent 1.6px) 3px 3px/6px 6px,linear-gradient(160deg,#f6e7bd,#c99a45)}
+/* подарок в лотке */
+.gift{position:relative;width:58px;height:58px;cursor:pointer;animation:bob 2.6s ease-in-out infinite;touch-action:none}
+.gift .box{position:absolute;left:6px;right:6px;bottom:0;height:38px;border-radius:4px;background:var(--gc);box-shadow:inset 0 -6px 10px rgba(0,0,0,.25),0 6px 12px rgba(0,0,0,.45)}
+.gift .box::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:8px;transform:translateX(-50%);background:var(--gold)}
+.gift .lid{position:absolute;left:2px;right:2px;top:10px;height:12px;border-radius:3px;background:var(--gc);filter:brightness(1.15);box-shadow:0 3px 6px rgba(0,0,0,.35);transition:transform .7s cubic-bezier(.3,1.4,.5,1),opacity .7s}
+.gift .lid::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:8px;transform:translateX(-50%);background:var(--gold)}
+.gift .lid::after{content:"";position:absolute;left:50%;top:-11px;width:22px;height:12px;transform:translateX(-50%);border:3px solid var(--gold);border-bottom:0;border-radius:12px 12px 0 0}
+.gift .peek{position:absolute;left:50%;bottom:16px;transform:translateX(-50%) scale(.2);opacity:0;transition:transform .8s .25s cubic-bezier(.3,1.5,.5,1),opacity .4s .25s}
+.gift.open{animation:none;cursor:grab}
+.gift.open .lid{transform:translate(26px,-34px) rotate(38deg);opacity:0}
+.gift.open .peek{transform:translateX(-50%) translateY(-30px) scale(1);opacity:1}
+.gift.open .box{opacity:.55}
+.gift .peek .orn{width:44px;height:44px}
+/* шар на ниточке */
+.hang{position:absolute;width:9%;display:flex;flex-direction:column;align-items:center;transform:translateX(-50%);transform-origin:50% 0;cursor:pointer}
+.hang .str{width:1.2px;height:14px;background:linear-gradient(#d9c08a,#8a6a2a)}
+.hang .loop{width:7px;height:7px;border:1.5px solid #d9c08a;border-radius:50%;margin-bottom:-2px}
+.hang .orn{width:100%;height:auto;aspect-ratio:1;box-shadow:0 4px 8px rgba(0,0,0,.4)}
+.hang.swing{animation:sw 2.8s ease-out}
+@keyframes sw{0%{transform:translateX(-50%) rotate(22deg)}18%{transform:translateX(-50%) rotate(-15deg)}36%{transform:translateX(-50%) rotate(9deg)}54%{transform:translateX(-50%) rotate(-5deg)}72%{transform:translateX(-50%) rotate(2deg)}100%{transform:translateX(-50%) rotate(0)}}
+.carry{position:fixed;z-index:50;pointer-events:none;display:flex;flex-direction:column;align-items:center;transform-origin:50% 0;width:52px;margin-left:-26px}
+.carry .str{width:1.2px;height:16px;background:linear-gradient(#f2dca2,#8a6a2a)}
+.carry .loop{width:9px;height:9px;border:2px solid #f2dca2;border-radius:50%;margin-bottom:-2px}
+.carry .orn{width:52px;height:52px;box-shadow:0 12px 20px rgba(0,0,0,.5)}
+.carry.back{transition:left .5s ease,top .5s ease,opacity .5s;opacity:0}
+.hook{position:absolute;width:3.2%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,#fff6d0 0 30%,rgba(255,230,150,.35) 60%,transparent 70%);opacity:0;transition:opacity .25s,transform .2s;pointer-events:none}
+.treewrap.carrying .hook{opacity:.75}
+.hook.near{opacity:1!important;transform:translate(-50%,-50%) scale(2.2);background:radial-gradient(circle,#fff 0 30%,rgba(255,220,120,.6) 55%,transparent 72%)}
+.treeimg.shiver{animation:shiver .6s ease-out;transform-origin:50% 88%}
+@keyframes shiver{25%{transform:rotate(.9deg)}50%{transform:rotate(-.7deg)}75%{transform:rotate(.35deg)}}
+.spark{position:absolute;width:5px;height:5px;border-radius:50%;background:#fff3c4;box-shadow:0 0 8px 2px rgba(255,220,130,.9);pointer-events:none;animation:spark .9s ease-out forwards}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+.label{position:absolute;transform:translate(-50%,8px);background:var(--paper);color:#3a2a1c;font:700 16px/1.1 Caveat,cursive;padding:5px 9px;border-radius:4px;white-space:nowrap;box-shadow:0 4px 10px rgba(0,0,0,.4);pointer-events:none;z-index:5;animation:fadeL 2.6s forwards}
+@keyframes fadeL{0%,80%{opacity:1}100%{opacity:0}}
+.steps{display:flex;justify-content:center;gap:10px;margin-top:16px}
+.ribbon{font:600 11.5px Inter;color:var(--muted);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12)}
+.ribbon b{display:block;font:700 20px Caveat,cursive;color:var(--ink)}
+.ribbon.on{border-color:var(--gold);background:rgba(227,187,99,.1);color:var(--gold2)}
+.reset{margin-top:14px;font-size:12px;color:var(--muted);background:none;border:0;text-decoration:underline;cursor:pointer}
+/* ---------- дом ---------- */
+.modal{position:fixed;inset:0;z-index:30;background:rgba(5,6,12,.86);display:none;justify-content:center;overflow:auto;padding:16px 12px 40px}
+.modal.on{display:flex}
+.card{width:100%;max-width:440px;height:max-content;border-radius:20px;overflow:hidden;background:#17120e;box-shadow:0 30px 80px rgba(0,0,0,.7)}
+.houseview{position:relative;height:420px;background-repeat:no-repeat;overflow:hidden}
+.houseview::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.35),transparent 25%,transparent 70%,#17120e)}
+.hole{position:absolute;overflow:hidden;background:radial-gradient(circle at 50% 60%,#fff0c4,#f2b65c 35%,#8a4313 75%,#2c1407);perspective:600px}
+.leaf{position:absolute;inset:0;transform-origin:left center;background-repeat:no-repeat;transition:transform 1.4s cubic-bezier(.6,.05,.2,1)}
+.houseview.open .leaf{transform:rotateY(-108deg)}
+.hv-cap{position:absolute;left:0;right:0;top:18px;text-align:center;z-index:2;text-shadow:0 2px 12px rgba(0,0,0,.9)}
+.hv-cap small{font:600 11px Inter;letter-spacing:.24em;text-transform:uppercase;color:#f3e6cf}
+.hv-cap b{display:block;font:700 40px/1 Caveat,cursive;color:var(--gold2)}
+.x{position:absolute;right:12px;top:12px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(0,0,0,.5);color:#fff;font-size:16px;cursor:pointer;z-index:4}
+.sec{padding:18px 20px}
+.dish{display:flex;gap:14px;align-items:center}
+.dish .ph{flex:0 0 92px;height:92px;border-radius:50%;background:radial-gradient(circle,#3b2c20,#231a13);border:2px solid rgba(227,187,99,.4);display:flex;align-items:center;justify-content:center;text-align:center;font-size:10.5px;color:var(--muted);padding:8px}
+.dish b{font:600 21px/1.15 "Playfair Display",serif;font-style:italic}
+.dish p{margin:4px 0 8px;color:var(--muted);font-size:13.5px}
+.link{font:600 13px Inter;color:var(--gold2);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.note{position:relative;background:var(--paper);color:#3a2a1c;border-radius:4px;padding:18px 18px 16px;transform:rotate(-.8deg);
+  box-shadow:0 10px 24px rgba(0,0,0,.45);background-image:linear-gradient(transparent 27px,rgba(120,90,60,.12) 28px);background-size:100% 28px}
+.note .from{font:700 13px Inter;letter-spacing:.14em;text-transform:uppercase;color:#9a4a2a}
+.note .q{font:600 24px/1.15 Caveat,cursive;margin:6px 0 12px}
+.opts{display:grid;gap:8px}
+.opts button{font:600 19px Caveat,cursive;text-align:left;padding:8px 12px;border-radius:6px;border:1.5px dashed rgba(90,60,40,.35);background:rgba(255,255,255,.35);color:#3a2a1c;cursor:pointer}
+.opts button.ok{border:1.5px solid #2f6b4f;background:#d9ead9}
+.opts button.no{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.won{display:none;flex-direction:column;align-items:center;gap:10px;margin-top:16px}
+.won.on{display:flex}
+.won .orn{width:70px;height:70px;animation:swing2 2.6s ease-out;transform-origin:50% -40%}
+@keyframes swing2{0%{transform:rotate(18deg)}20%{transform:rotate(-12deg)}40%{transform:rotate(7deg)}60%{transform:rotate(-4deg)}100%{transform:rotate(0)}}
+.won span{font:700 24px Caveat,cursive;color:var(--gold2)}
+.btn{font:700 14px Inter;padding:12px 20px;border-radius:30px;border:0;cursor:pointer;background:linear-gradient(180deg,#f2d07c,#d9a945);color:#2a1a08;box-shadow:0 6px 16px rgba(217,169,69,.35)}
+.shop h4{margin:0 0 2px;font:700 26px Caveat,cursive;color:var(--gold2)}
+.shop .muted{color:var(--muted);font-size:12.5px}
+.shelf{position:relative;display:flex;justify-content:center;gap:16px;padding:18px 6px 0;margin-top:6px}
+.shelf::after{content:"";position:absolute;left:0;right:0;bottom:-12px;height:14px;border-radius:3px;background:linear-gradient(180deg,#8a5d38,#4e321d);box-shadow:0 8px 14px rgba(0,0,0,.5)}
+.book{position:relative;width:96px;text-align:center}
+.cover{height:128px;border-radius:3px 7px 7px 3px;padding:12px 8px;display:flex;flex-direction:column;justify-content:space-between;
+  box-shadow:inset 6px 0 8px -4px rgba(0,0,0,.45),0 8px 14px rgba(0,0,0,.5);font:600 12.5px/1.15 "Playfair Display",serif;font-style:italic;color:#fff6e2}
+.cover small{font:600 8px Inter;letter-spacing:.16em;text-transform:uppercase;opacity:.75;font-style:normal}
+.tagp{position:absolute;right:-8px;top:-12px;background:var(--paper);color:#3a2a1c;font:700 14px/1 Caveat,cursive;padding:5px 8px 4px;border-radius:3px;transform:rotate(8deg);box-shadow:0 3px 6px rgba(0,0,0,.4)}
+.tagp::before{content:"";position:absolute;left:5px;top:50%;width:4px;height:4px;margin-top:-2px;border-radius:50%;background:#17120e}
+.timer{margin-top:24px;text-align:center;font:600 12px Inter;color:#ffb4a3;letter-spacing:.05em}
+/* ---------- схема ---------- */
+.scheme{max-width:860px;margin:0 auto}
+.scheme h2{font:800 22px "Playfair Display",serif;margin:6px 0 4px}
+.flow{display:grid;gap:10px;margin-top:14px}
+.node{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
+.node .n{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font:800 18px "Playfair Display",serif;color:var(--gold)}
+.node b{font-size:15px}.node p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+.node.sale{border-color:rgba(227,187,99,.45);background:rgba(227,187,99,.07)}.node.sale .n{background:var(--gold);color:#2a1a08}
+.chip{display:inline-block;font:700 10.5px Inter;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:10px;background:var(--gold);color:#2a1a08;margin-left:6px;vertical-align:2px}
+.skins{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:12px}
+.skin{padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);font-size:13px;color:var(--muted)}
+.skin b{display:block;color:var(--ink);font-size:14.5px;margin-bottom:2px}
+.ask{margin-top:22px;padding:14px 16px;border-radius:14px;border:1px dashed var(--gold);font-size:14px}
+.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<canvas id="snow"></canvas>
+<div class="tabs"><button class="on" data-p="play">Играть</button><button data-p="scheme">Схема продаж</button></div>
+
+<!-- ================= ИГРА ================= -->
+<div class="page on" id="play"><div class="phone">
+  <div class="title"><b>Новогодний городок</b><span>31 дом до праздников</span></div>
+  <div class="lead">Постучи в дом с табличкой. За дверью рецепт и записка от хозяина. Отгадаешь — получишь ёлочный шар. В демо открыты три дома.</div>
+  <div class="town" id="townScroll"><div class="town-in" id="town"></div></div>
+  <div class="swipe">← улицу можно листать →</div>
+
+  <div class="treebox" id="treebox">
+    <h3>Моя ёлка</h3>
+    <div class="count"><span id="ballCount">0</span> из 31 шара</div>
+    <div class="hint" id="hint">Открой первый дом, и здесь появится шар</div>
+    <div class="tray" id="tray"></div>
+    <div class="treewrap" id="tree"><div class="treeimg" id="treeSvg"></div></div>
+    <div class="steps">
+      <div class="ribbon" id="l10"><b>10</b>промокод</div>
+      <div class="ribbon" id="l20"><b>20</b>бонусный рецепт</div>
+      <div class="ribbon" id="l31"><b>31</b>открытка и приз</div>
+    </div>
+    <button class="reset" id="reset">снять все шары и начать заново</button>
+  </div>
+</div></div>
+
+<div class="modal" id="modal"><div class="card">
+  <div class="houseview" id="hv"><button class="x" id="close">✕</button>
+    <div class="hole" id="hole"><div class="leaf" id="leaf"></div></div>
+    <div class="hv-cap"><small id="hvDate"></small><b id="hvTitle"></b></div>
+  </div>
+  <div class="sec">
+    <div class="dish"><div class="ph">кадр блюда из урока</div>
+      <div><b id="rName"></b><p id="rText"></p><button class="link" onclick="this.outerHTML='<span class=&quot;muted&quot; style=&quot;font-size:12.5px&quot;>Здесь откроется бесплатный рецепт дня: шаги, фото, видео.</span>'">Открыть рецепт →</button></div></div>
+  </div>
+  <div class="sec">
+    <div class="note"><div class="from" id="qFrom"></div><div class="q" id="qText"></div><div class="opts" id="opts"></div></div>
+    <div class="won" id="won"><div class="orn" id="wonOrn"></div><span id="wonText">Шар твой!</span><button class="btn" id="hangBtn">Отнести к ёлке</button></div>
+  </div>
+  <div class="sec shop"><h4 id="shopTitle">Витрина</h4><div class="muted">Цены и полки пока заглушки.</div>
+    <div class="shelf" id="shelf"></div><div class="timer">⏳ цена дня действует, пока дверь открыта — до 23:59</div></div>
+</div></div>
+
+<!-- ================= СХЕМА ================= -->
+<div class="page" id="scheme"><div class="scheme">
+  <h2>Путь игрока и где живут продажи</h2>
+  <div class="muted">Игра бесплатная. Шары даются только за знания и действия, их нельзя купить. Продажи стоят рядом с игрой: золотые карточки ниже.</div>
+  <div class="flow">
+    <div class="node"><div class="n">1</div><div><b>Вход</b><p>Рилс «Окошко №N» → кодовое слово в комментарии → ссылка на городок. Или карусель-анонс в конце ноября.</p></div></div>
+    <div class="node"><div class="n">2</div><div><b>Городок</b><p>Улица с домами разных стран. Сегодняшний дом светится, будущие заперты, пройденные отмечены.</p></div></div>
+    <div class="node"><div class="n">3</div><div><b>Дверь открывается → рецепт дня</b><p>Бесплатно. Кадр блюда, шаги, видео из урока.</p></div></div>
+    <div class="node"><div class="n">4</div><div><b>Записка хозяина: вопрос или загадка → шар</b><p>Шар — память о рецепте: апельсиновый за цукаты, клетчатый за шотландский кекс, сахарный за штоллен.</p></div></div>
+    <div class="node sale"><div class="n">₽</div><div><b>Витрина дома <span class="chip">продажа</span></b><p>Книга или сборник по теме рецепта: штоллен → «Рождественская выпечка», рулет → «Мясные рулеты». Цена дня действует, пока дверь открыта (до 23:59).</p></div></div>
+    <div class="node"><div class="n">5</div><div><b>Ёлка</b><p>Игрок сам вешает шар куда хочет. Ёлка — личный прогресс, и её видно каждый день.</p></div></div>
+    <div class="node sale"><div class="n">₽</div><div><b>Ступени 10 / 20 / 31 <span class="chip">продажа</span></b><p>Награда за упорство: промокод, бонусный рецепт, скидка на большой сборник. Кто больше играл, тому выгоднее купить.</p></div></div>
+    <div class="node sale"><div class="n">₽</div><div><b>Ключ от всех дверей <span class="chip">продажа</span></b><p>Для тех, кто пропустил дни или хочет всё сразу: все 31 рецепт одной книгой и бонусы. Главный продукт календаря.</p></div></div>
+    <div class="node sale"><div class="n">₽</div><div><b>Подарочная неделя (8–15) <span class="chip">продажа</span></b><p>Сборник в подарок другу, электронная открытка внутри.</p></div></div>
+    <div class="node sale"><div class="n">🎟</div><div><b>Билет новогодней лотереи <span class="chip">продажа / награда</span></b><p>Можно давать за покупку или за ступени ёлки. Розыгрыш 31-го в эфире. Механика и призы обсуждаются; формат розыгрыша нужно проверить юридически.</p></div></div>
+    <div class="node"><div class="n">6</div><div><b>Финал 31-го</b><p>Украшенная ёлка превращается в именную открытку «Моя ёлка 2026» для соцсетей, так приходят новые игроки. В ней промокод на «Новогодний стол».</p></div></div>
+  </div>
+  <h2 style="margin-top:28px">Один движок — разные праздники</h2>
+  <div class="muted">Механика одна и та же: путь по дням → дверь → рецепт → задание → предмет в коллекцию → витрина → финальная открытка. Меняются только картинки, длина и таблица содержания.</div>
+  <div class="skins">
+    <div class="skin"><b>🎄 Новый год</b>31 день · городок, шары на ёлку</div>
+    <div class="skin"><b>🧸 14 февраля</b>14 дней · собери пазл «мишка с сердцем»</div>
+    <div class="skin"><b>🌷 8 марта</b>8 дней · собери букет из тюльпанов и мимоз</div>
+    <div class="skin"><b>🐣 Пасха</b>7 дней · вырасти цыплят</div>
+    <div class="skin"><b>🥞 Масленица</b>7 дней · стопка блинов до неба</div>
+    <div class="skin"><b>🍂 Осень</b>сезон · урожай в корзину</div>
+  </div>
+  <div class="ask"><b>Открытые вопросы:</b> что ставим на полки (готовые книги или новые мини-сборники), цены, нужен ли «ключ от всех дверей», приз за полную ёлку, как устроена лотерея.</div>
+</div></div>
+
+<script>
+const PANO_W=3168,PANO_H=1344,PANO='url("img/town.jpg")';
+const DAYS=[
+ {d:1,house:'Итальянский дом',door:{l:21.1,t:57.8,w:3.4,h:20.5,arch:true},orn:'t-orange',ornName:'апельсиновый шар',
+  name:'Цукаты из апельсиновых корочек',short:'цукаты',text:'Готовим первыми: они нужны в штоллен и кекс.',
+  from:'Записка от синьоры с зелёными ставнями',q:'Зачем цукаты варят в самом начале декабря?',
+  opts:['Чтобы успели пойти в штоллен и кекс, которые дозревают к празднику','Потому что апельсины бывают только в декабре','Просто так принято'],right:0,
+  shelf:[['Рождественская выпечка','11 рецептов','#7d1d1f'],['Ключ от всех дверей','31 рецепт сразу','#1b2b52'],['Билет новогодней лотереи','розыгрыш 31.12','#2f5f47']]},
+ {d:2,house:'Шотландский коттедж',door:{l:32.5,t:60.7,w:3.4,h:17.7},orn:'t-tartan',ornName:'клетчатый шар',
+  name:'Фруктовый рождественский кекс',short:'рождественский кекс',text:'Весь месяц пропитываем, к 25-му он в лучшей форме.',
+  from:'Записка из каменного коттеджа',q:'Меня пекут заранее, поят неделями, а на Рождество я главный на британском столе. Кто я?',
+  opts:['Рождественский кекс, Christmas cake','Панеттоне','Пряничный домик'],right:0,
+  shelf:[['Рождественская выпечка','кекс и покрытие','#7d1d1f'],['Ключ от всех дверей','31 рецепт сразу','#1b2b52']]},
+ {d:3,house:'Немецкая пекарня',door:{l:9.8,t:61.0,w:3.6,h:18.4},orn:'t-sugar',ornName:'сахарный шар',
+  name:'Штоллен немецкий рождественский',short:'штоллен',text:'Дозревает 2–3 недели, как раз к Рождеству.',
+  from:'Записка от пекаря',q:'Белый, как снег, весь в сахарной пудре, внутри изюм и цукаты. Из какого я города?',
+  opts:['Из Дрездена','Из Милана','Из Эдинбурга'],right:0,
+  shelf:[['Рождественская выпечка','и 4 штоллена','#7d1d1f'],['Ключ от всех дверей','31 рецепт сразу','#1b2b52'],['Билет новогодней лотереи','розыгрыш 31.12','#2f5f47']]},
+];
+const byD=d=>DAYS.find(D=>D.d===d);
+let S={done:{},balls:[],tray:[],opened:{}};
+try{const v=JSON.parse(localStorage.getItem('gorodok-v5')||'null');if(v)S=v}catch(e){}
+const save=()=>{try{localStorage.setItem('gorodok-v5',JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const ornEl=(d,extra='')=>{const e=document.createElement('div');e.className='orn '+byD(d).orn+' '+extra;return e};
+
+// ---------- город ----------
+function drawTown(){
+  const t=$('town');t.innerHTML='';
+  DAYS.forEach(D=>{const s=document.createElement('div'),o=D.door;
+    s.className='spot '+(S.done[D.d]?'done':'fresh');s.style.cssText=`left:${o.l}%;top:${o.t}%;width:${o.w}%;height:${o.h}%`;
+    s.innerHTML=`<div class="sign">${D.d}</div>`;s.onclick=()=>openHouse(D);t.appendChild(s)});
+  $('ballCount').textContent=S.balls.length;
+}
+
+// ---------- дом ----------
+let cur=null;
+function openHouse(D){
+  cur=D;$('modal').classList.add('on');$('modal').scrollTop=0;const hv=$('hv');hv.classList.remove('open');
+  const W=hv.clientWidth,H=hv.clientHeight,o=D.door;
+  const bw=W/(o.w*5.2/100),bh=bw*PANO_H/PANO_W;
+  const dx=W/2-(o.l+o.w/2)/100*bw,dy=H*0.86-(o.t+o.h)/100*bh;
+  Object.assign(hv.style,{backgroundImage:PANO,backgroundSize:`${bw}px ${bh}px`,backgroundPosition:`${dx}px ${dy}px`});
+  const L=dx+o.l/100*bw,T=dy+o.t/100*bh,DW=o.w/100*bw,DH=o.h/100*bh,r=DW/2/DH*100;
+  Object.assign($('hole').style,{left:L+'px',top:T+'px',width:DW+'px',height:DH+'px',borderRadius:o.arch?`50% 50% 0 0/${r}% ${r}% 0 0`:'3px'});
+  Object.assign($('leaf').style,{backgroundImage:PANO,backgroundSize:`${bw}px ${bh}px`,backgroundPosition:`${dx-L}px ${dy-T}px`});
+  $('hvDate').textContent=D.d+' декабря';$('hvTitle').textContent=D.house;
+  setTimeout(()=>hv.classList.add('open'),450);
+  $('rName').textContent=D.name;$('rText').textContent=D.text;$('qFrom').textContent=D.from;$('qText').textContent=D.q;
+  const op=$('opts');op.innerHTML='';
+  D.opts.forEach((t,i)=>{const b=document.createElement('button');b.textContent=t;
+    if(S.done[D.d]&&i===D.right)b.classList.add('ok');
+    b.onclick=()=>{if(S.done[D.d])return;
+      if(i===D.right){b.classList.add('ok');S.done[D.d]=1;S.tray.push(D.d);save();showWon(D);drawTown();drawTree()}
+      else{b.classList.remove('no');void b.offsetWidth;b.classList.add('no')}};op.appendChild(b)});
+  $('won').classList.remove('on');if(S.done[D.d])showWon(D);
+  $('shopTitle').textContent='Витрина · '+D.house.toLowerCase();
+  $('shelf').innerHTML=D.shelf.map(([t,s,c])=>`<div class="book"><div class="cover" style="background:linear-gradient(160deg,${c},#120c08 140%)"><small>${s}</small>${t}</div><div class="tagp">цена</div></div>`).join('');
+}
+function showWon(D){
+  const w=$('wonOrn');w.className='orn '+D.orn;$('won').classList.add('on');
+  const inTray=S.tray.includes(D.d);
+  $('wonText').textContent=inTray?'Твой '+D.ornName+' ждёт в коробочке под ёлкой':'Этот шар уже висит на ёлке';
+  $('hangBtn').style.display=inTray?'':'none';
+}
+$('hangBtn').onclick=()=>{$('modal').classList.remove('on');drawTree();$('treebox').scrollIntoView({behavior:'smooth',block:'start'})};
+$('close').onclick=()=>$('modal').classList.remove('on');
+$('modal').onclick=e=>{if(e.target.id==='modal')$('modal').classList.remove('on')};
+
+// ---------- ёлка ----------
+const TIERS=[[44,92,44],[22,64,32],[6,38,20]]; // [верх, низ, полуширина низа] в единицах viewBox
+function insideTree(x,y){return TIERS.some(([t,b,h])=>y>=t+4&&y<=b-1&&Math.abs(x-50)<=(y-t)/(b-t)*h*0.86)}
+
+// крючки: места на кончиках лап, куда можно прицепить шар
+const IW=1611,H=2000/IW*100,CX=805;   // H — высота кадра в процентах ширины
+const HOOKS=[];
+[[430,1,0],[560,2,120],[700,3,190],[840,3,250],[980,4,300],[1120,4,350],[1260,5,390],[1400,5,420],[1530,4,400]].forEach(([y,k,w])=>{
+  for(let i=0;i<k;i++)HOOKS.push([(k===1?CX:CX-w+2*w*i/(k-1))/IW*100,y/IW*100])});
+const COLORS={1:'#b8322c',2:'#1f4e8c',3:'#2f6b4f'};
+let drag=null;
+const hookFree=i=>!S.balls.some(b=>b.h===i);
+function drawTree(animIdx){
+  const tr=$('tree');tr.querySelectorAll('.hang,.hook').forEach(e=>e.remove());
+  HOOKS.forEach(([x,y],i)=>{if(!hookFree(i))return;const h=document.createElement('div');h.className='hook';h.dataset.i=i;
+    h.style.left=x+'%';h.style.top=(y/H*100)+'%';tr.appendChild(h)});
+  S.balls.forEach((b,i)=>{const [x,y]=HOOKS[b.h];const h=document.createElement('div');h.className='hang'+(i===animIdx?' swing':'');
+    h.style.left=x+'%';h.style.top=(y/H*100)+'%';h.innerHTML='<div class="str"></div><div class="loop"></div>';h.appendChild(ornEl(b.d));
+    h.onclick=()=>label(x,y,b.d);tr.appendChild(h)});
+  const t=$('tray');t.innerHTML='';
+  S.tray.forEach(d=>{const g=document.createElement('div');g.className='gift'+(S.opened[d]?' open':'');g.style.setProperty('--gc',COLORS[d]);
+    g.innerHTML='<div class="peek"></div><div class="box"></div><div class="lid"></div>';g.querySelector('.peek').appendChild(ornEl(d));
+    g.onpointerdown=e=>{e.preventDefault();if(!S.opened[d]){S.opened[d]=1;save();g.classList.add('open');hint();return}startCarry(e,d,g)};t.appendChild(g)});
+  hint();const n=S.balls.length;$('ballCount').textContent=n;[10,20,31].forEach(k=>$('l'+k).classList.toggle('on',n>=k));
+}
+function hint(msg){
+  const closed=S.tray.some(d=>!S.opened[d]),open=S.tray.some(d=>S.opened[d]);
+  $('hint').textContent=msg||(closed?'Под ёлкой подарок. Открой коробочку':open?'Возьми шар за петельку и прицепи на ветку':
+    S.balls.length?(S.balls.length>=DAYS.length?'Все шары демо на ёлке ✨ Нажми на шар — вспомнишь, за что он':'Висит! Загляни в следующий дом'):'Открой первый дом, и здесь появится шар');
+}
+function label(x,y,d){const D=byD(d),l=document.createElement('div');l.className='label';l.style.left=x+'%';l.style.top=(y/H*100+9)+'%';
+  l.textContent=D.d+' декабря · '+D.short;$('tree').appendChild(l);setTimeout(()=>l.remove(),2700)}
+function toTree(cx,cy){const r=$('tree').getBoundingClientRect();return[(cx-r.left)/r.width*100,(cy-r.top)/r.width*100]}
+function nearestHook(cx,cy){const [x,y]=toTree(cx,cy);let best=-1,bd=9;   // меряем от петельки, за которую держим
+  HOOKS.forEach(([hx,hy],i)=>{if(!hookFree(i))return;const dd=Math.hypot(hx-x,hy-y);if(dd<bd){bd=dd;best=i}});return best}
+function startCarry(e,d,g){
+  const c=document.createElement('div');c.className='carry';c.innerHTML='<div class="loop"></div><div class="str"></div>';c.appendChild(ornEl(d));
+  document.body.appendChild(c);g.style.visibility='hidden';
+  drag={d,c,g,lx:e.clientX,ang:0,n:-1};moveCarry(e.clientX,e.clientY);$('tree').classList.add('carrying');hint('Подведи петельку к светящейся лапке и отпусти');
+}
+function moveCarry(x,y){const D=drag;const vx=x-D.lx;D.lx=x;D.ang=Math.max(-35,Math.min(35,D.ang*0.85-vx*1.6));
+  D.c.style.left=x+'px';D.c.style.top=(y-4)+'px';D.c.style.transform=`rotate(${D.ang}deg)`;
+  const n=nearestHook(x,y);document.querySelectorAll('.hook').forEach(h=>h.classList.toggle('near',+h.dataset.i===n));D.n=n}
+addEventListener('pointermove',e=>{if(drag)moveCarry(e.clientX,e.clientY)});
+addEventListener('pointerup',()=>{if(!drag)return;const {d,c,g,n}=drag;drag=null;$('tree').classList.remove('carrying');
+  if(n>=0){c.remove();S.balls.push({d,h:n});S.tray=S.tray.filter(v=>v!==d);save();drawTree(S.balls.length-1);celebrate(n);drawTown()}
+  else{const r=g.getBoundingClientRect();c.classList.add('back');c.style.left=(r.left+r.width/2)+'px';c.style.top=r.top+'px';
+    setTimeout(()=>{c.remove();g.style.visibility=''},500);hint('Шар вернулся в коробочку. Неси его прямо к светящейся лапке')}});
+function celebrate(i){const [x,y]=HOOKS[i],tr=$('tree'),sv=$('treeSvg');sv.classList.remove('shiver');void sv.offsetWidth;sv.classList.add('shiver');
+  for(let k=0;k<12;k++){const p=document.createElement('div');p.className='spark';const a=k/12*6.28,r=24+Math.random()*22;
+    p.style.left=x+'%';p.style.top=(y/H*100)+'%';p.style.setProperty('--dx',Math.cos(a)*r+'px');p.style.setProperty('--dy',Math.sin(a)*r+'px');
+    tr.appendChild(p);setTimeout(()=>p.remove(),950)}
+  setTimeout(()=>label(x,y,S.balls[S.balls.length-1].d),700)}
+$('reset').onclick=()=>{S={done:{},balls:[],tray:[],opened:{}};save();drawTown();drawTree()};
+
+// ---------- снег ----------
+(function(){const c=$('snow'),x=c.getContext('2d');let F=[];
+  const size=()=>{c.width=innerWidth;c.height=innerHeight;F=Array.from({length:Math.round(innerWidth/9)},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.8+.4,s:Math.random()*.6+.25,w:Math.random()*6.28}))};
+  size();addEventListener('resize',size);
+  (function tick(){x.clearRect(0,0,c.width,c.height);x.fillStyle='rgba(255,255,255,.75)';
+    F.forEach(f=>{f.y+=f.s;f.w+=.01;f.x+=Math.sin(f.w)*.3;if(f.y>c.height){f.y=-4;f.x=Math.random()*c.width}x.beginPath();x.arc(f.x,f.y,f.r,0,6.28);x.fill()});
+    requestAnimationFrame(tick)})();})();
+
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p))});
+drawTown();drawTree();
+</script>
+</body>
+</html>
